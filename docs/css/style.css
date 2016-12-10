@@ -1,0 +1,58 @@
+#my-videos{
+	position: relative;
+}
+#my-video {
+	margin-top: 15px;
+	width: 280px;
+	height: auto;
+	background-color: #eee;
+}
+#text-chat{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	width: 720px;
+	display: inline-block;
+	background-color: #aaa;
+}
+#chat-data{
+	height: 90%;
+	overflow-y: scroll;
+}
+#chat-input{
+	position: absolute;
+	bottom: 0px;
+}
+#chat-message{
+	
+}
+#chat-data-send{
+	
+}
+
+.remoteVideoElement{
+	width: 50%;
+	display: inline-block;
+	text-align: center;
+}
+.remoteVideos {
+	width: 100%;
+	height: 50%;
+	max-height: 480px;
+	background-color: #eee;
+}
+
+#video-container {
+	padding: 25px;
+	/*text-align: center;*/
+}
+#their-videos{
+	width: 100%;
+}
+#step1-error, #step2, #step3 {
+	display: none;
+}
+#my-id {
+	font-weight: bold;
+}

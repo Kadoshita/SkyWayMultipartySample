@@ -34,14 +34,23 @@ $(function(){
 	$('#end-call').click(function(){
 		room.close();
 		$('video').not('#my-video').parent().remove();
-		// $('video').not('#my-video').remove();
-		// $('label').not('#my-label').remove();
 		step2();
 	});
 	// メディアの再取得
 	$('#step1-retry').click(function(){
 		$('#step1-error').hide();
 		step1();
+	});
+	//テキストチャットの送信
+	$('#chat-input').submit(function(event) {
+		event.preventDefault();
+		var message=$('#chat-data-send').val();
+		if(!message){
+			return;
+		}
+		room.send(message);
+		$('#chat-data').append($('<p>'+message+'</p>'))
+			.scrollTop(document.getElementById('chat-data').scrollHeight);
 	});
 });
 function step1 () {
@@ -69,15 +78,20 @@ function step3 (room) {
 		const streamURL = URL.createObjectURL(stream);
 		const peerId = stream.peerId;
 		$('#their-videos').append($(
-			'<div>' +
+			'<div class="remoteVideoElement">' +
+			'<video autoplay class="remoteVideos" src="' + streamURL + '" id="video_' + peerId + '"></video><br>' +
 			'<label id="label_' + peerId + '">' + stream.peerId + ':' + stream.id + '</label>' +
-			'<video autoplay class="remoteVideos" src="' + streamURL + '" id="video_' + peerId + '">' +
 			'</div>'
 		));
 	});
 	room.on('removeStream', function(removedStream) {
 		$('#video_' + removedStream.peerId).remove();
 		$('#label_' + removedStream.peerId).remove();
+	});
+	//テキストチャットデータ受信時の処理
+	room.on('data',function(message){
+		$('#chat-data').append($('<p>'+message.data+'</p>')).scrollTop($('#chat-data').scrolllHeight);
+		console.log(message);
 	});
 	// UI stuff
 	//ルームを退出し、ルーム内の全てのコネクションをcloseします。
