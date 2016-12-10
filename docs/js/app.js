@@ -33,6 +33,9 @@ $(function(){
 	// 通信終了時の処理
 	$('#end-call').click(function(){
 		room.close();
+		$('video').not('#my-video').parent().remove();
+		// $('video').not('#my-video').remove();
+		// $('label').not('#my-label').remove();
 		step2();
 	});
 	// メディアの再取得
@@ -47,7 +50,7 @@ function step1 () {
 	function(stream){
 		// 自分のvideoストリームを表示
 		$('#my-video').prop('src', URL.createObjectURL(stream));
-		$('#my-label').text(peer.id + ':' + stream.id);
+		$('#my-label').text(peer.id + 'のストリームid:' + stream.id);
 		window.localStream = stream;
 		step2();
 	},
