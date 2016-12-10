@@ -1,26 +1,27 @@
-// Compatibility shim
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-// Peer object
+// Peerオブジェクト
 var peer = new Peer({
 	key: '6e837f61-b5f8-4a01-aae5-bb21c54ca930',
 	debug: 3
 });
 var room;
+//SkyWayサーバとのコネクションが確立した際に発生します。
 peer.on('open', function(){
 	$('#my-id').text(peer.id);
-	// Get things started
+	// メディアの取得を開始
 	step1();
 });
+//エラーが発生したときに発生
 peer.on('error', function(err){
 	alert(err.message);
 	// Return to step 2 if error occurs
 	step2();
 });
-// Click handlers setup
+// クリックイベント等の処理
 $(function(){
 	$('#make-call').submit(function(e){
 		e.preventDefault();
-		// Initiate a call!
+		// Roomの設定
 		var roomName = $('#join-room').val();
 		if (!roomName) {
 			return;
@@ -29,21 +30,22 @@ $(function(){
 		$('#room-id').text(roomName);
 		step3(room);
 	});
+	// 通信終了時の処理
 	$('#end-call').click(function(){
 		room.close();
 		step2();
 	});
-	// Retry if getUserMedia fails
+	// メディアの再取得
 	$('#step1-retry').click(function(){
 		$('#step1-error').hide();
 		step1();
 	});
 });
 function step1 () {
-	// Get audio/video stream
+	// audio,videoストリームの取得
 	navigator.getUserMedia({audio: true, video: true},
 	function(stream){
-		// Set your video displays
+		// 自分のvideoストリームを表示
 		$('#my-video').prop('src', URL.createObjectURL(stream));
 		$('#my-label').text(peer.id + ':' + stream.id);
 		window.localStream = stream;
@@ -59,7 +61,7 @@ function step2 () {
 	$('#join-room').focus();
 }
 function step3 (room) {
-	// Wait for stream on the call, then set peer video display
+	//他のユーザのストリームを受信した時に発生します。送信者のpeerIdは peerStream.peerIdで取得できます。
 	room.on('stream', function(stream){
 		const streamURL = URL.createObjectURL(stream);
 		const peerId = stream.peerId;
@@ -75,6 +77,7 @@ function step3 (room) {
 		$('#label_' + removedStream.peerId).remove();
 	});
 	// UI stuff
+	//ルームを退出し、ルーム内の全てのコネクションをcloseします。
 	room.on('close', step2);
 	$('#step1, #step2').hide();
 	$('#step3').show();
